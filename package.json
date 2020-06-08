@@ -4,7 +4,8 @@
   "description": "梦幻西游H5-electron桌面版",
   "main": "src/index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-packager ./ --platform=win32 --arch=x64 --overwrite"
   },
   "keywords": [],
   "author": "",

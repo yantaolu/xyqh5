@@ -5,16 +5,16 @@ const { app, screen, dialog, BrowserWindow, BrowserView } = require('electron');
 const { format } = require('./utils/date');
 
 // 获取带系统时间的标题，方便查看任务时间
-const getTitle = () => `微拍堂 ${format('MM-dd HH:mm:ss')}`;
+const getTitle = () => `梦幻西游H5 ${format('MM-dd HH:mm:ss')}`;
 // 根据主屏幕尺寸设置合适的窗口尺寸
 const getSize = () => {
     const { height: sh = 900 } = screen.getPrimaryDisplay().bounds || {};
     // 减去适当的任务栏高度
-    const height = sh - 100;
+    const height = sh - 160;
     // 合适的高度下16:9的尺寸
     return {
         // 16:9屏幕
-        width: Math.round(height * (9 / 16)),
+        width: Math.round(height * (9 / 16) / 2) * 2,
         height,
     };
 };
@@ -30,7 +30,7 @@ const createWindow = () => {
         maximizable: false,
         resizable: false,
         show: false,
-        icon: path.resolve(__dirname, './imgs/icon.png'),
+        icon: path.resolve(__dirname, './imgs/favicon.ico'),
     });
 
     // 定时器更新标题拦时间
