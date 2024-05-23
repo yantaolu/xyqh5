@@ -1,100 +1,102 @@
 const path = require('path');
-const { app, screen, dialog, BrowserWindow, BrowserView } = require('electron');
+const { app, screen, BrowserWindow, BrowserView } = require('electron');
 
-// const { debounce } = require('./utils/fun');
 const { format } = require('./utils/date');
 
 // 获取带系统时间的标题，方便查看任务时间
-const getTitle = () => `梦幻西游H5 ${format('MM-dd HH:mm:ss')}`;
+const getTitle = () => `西游网页版 ${format('MM-dd HH:mm:ss')}`;
+
 // 根据主屏幕尺寸设置合适的窗口尺寸
 const getSize = () => {
-    const { height: sh = 900 } = screen.getPrimaryDisplay().bounds || {};
-    // 减去适当的任务栏高度
-    const height = sh - 160;
-    // 合适的高度下16:9的尺寸
-    return {
-        // 16:9屏幕
-        width: Math.round(height * (9 / 16) / 2) * 2,
-        height,
-    };
+  const { height: sh = 800 } = screen.getPrimaryDisplay().bounds || {};
+  // 减去适当的任务栏高度
+  const height = sh - 120;
+  // 合适的高度下16:9的尺寸
+  return {
+    // 16:9屏幕
+    width: Math.round((height * (9 / 16)) / 2) * 2,
+    height,
+  };
 };
 
 const URL = 'https://xyh5.163.com/game/?channel=netease';
 
-const createWindow = () => {
-    let win = new BrowserWindow({
-        title: getTitle(),
-        ...getSize(),
-        autoHideMenuBar: true,
-        useContentSize: true,
-        maximizable: false,
-        resizable: false,
-        show: false,
-        icon: path.resolve(__dirname, './imgs/favicon.ico'),
-    });
+// 主窗口
+const createWindow = async () => {
+  let win = new BrowserWindow({
+    title: getTitle(),
+    ...getSize(),
+    autoHideMenuBar: true,
+    useContentSize: true,
+    maximizable: false,
+    resizable: true,
+    show: false,
+    minimizable: false,
+  });
+  // 移除菜单栏
+  win.removeMenu();
 
-    // 定时器更新标题拦时间
-    const interval = setInterval(() => {
-        win && win.isVisible() && win.setTitle(getTitle());
+  // 定时器更新标题拦时间
+  let interval;
+  const quitApp = () => {
+    clearInterval(interval);
+    win = null;
+    app.quit();
+  };
+
+  const view = new BrowserView();
+  const refreshViewBounds = () => {
+    const { width, height } = win.getBounds();
+    const vw = Math.round((height * (9 / 16)) / 2) * 2;
+    view.setBounds({
+      // 16:9屏幕
+      width: Math.min(vw, width),
+      height,
+      x: Math.max(Math.round((width - vw) / 2), 0),
+      y: 0,
+    });
+  };
+
+  win.setBrowserView(view);
+  view.setBounds({ width: 0, height: 0, x: 0, y: 0 });
+  view.webContents.once('did-finish-load', refreshViewBounds);
+  view.webContents.loadURL(URL);
+
+  win.on('focus', () => {
+    interval = setInterval(() => {
+      win && win.isVisible() && win.setTitle(getTitle());
     }, 1000);
+  });
+  win.on('blur', () => {
+    interval && clearInterval(interval);
+  });
+  win.on('resize', refreshViewBounds);
+  win.on('resized', refreshViewBounds);
+  win.on('close', quitApp);
 
-    // 退出app时清空定时任务
-    const quitApp = () => {
-        clearInterval(interval);
-        win = null;
-        app.quit();
-    };
-
-    // 发生加载错误时提醒并退出app
-    const quitOnError = () => {
-        win.setBounds({ width: 0, height: 0 });
-        win.show();
-        dialog.showMessageBox({
-            type: 'error',
-            title: '错误',
-            message: '加载失败，请稍候重试',
-        }).then(() => {
-            win.close();
-        });
-    };
-
-    // 移除菜单栏
-    win.removeMenu();
-
-    // 利用BrowserView加载页面，方便定制窗口标题
-    const view = new BrowserView();
-    win.setBrowserView(view);
-    view.setBounds({ x: 0, y: 0, ...getSize() });
-
-    // 移动窗口可根据窗口所在屏幕尺寸设置合适的新尺寸
-    // win.on('moved', debounce(() => {
-    //     if (win && view) {
-    //         const bounds = getSize(win);
-    //         win.setBounds(bounds);
-    //         view.setBounds({ x: 0, y: 0, ...bounds });
-    //     }
-    // }));
-
-    // 退出
-    win.on('close', quitApp);
-
-    // 加载错误尝试5次
-    let times = 0;
-    view.webContents.on('did-fail-load', () => {
-        if (times >= 5) {
-            quitOnError();
-            return;
-        }
-        view.webContents.reload();
-        times++;
-    });
-
-    // view加载成功时显示主窗口
-    view.webContents.once('did-finish-load', () => {
-        win.show();
-    });
-
-    view.webContents.loadURL(URL);
+  // 加载主页面
+  await win.loadFile(path.resolve(__dirname, 'index.html'));
+  win.show();
+  // process.env.NODE_ENV === 'development' && win.webContents.openDevTools({ mode: 'undocked' });
 };
 
-app.whenReady().then(createWindow);
+app.whenReady().then(async () => {
+  await createWindow();
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+// app.on('browser-window-blur', () => {});
+
+// app.on('browser-window-focus', () => {});
+
+// app.on('will-quit', () => {});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});

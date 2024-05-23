@@ -4,6 +4,8 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    name: '西游网页版',
+    icon: 'src/assets/icon.icns',
   },
   rebuildConfig: {},
   makers: [

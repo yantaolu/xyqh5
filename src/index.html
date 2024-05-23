@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <title>西游网页版</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100vw;
+        height: 100vh;
+      }
+      body {
+        display: flex;
+        justify-content: space-between;
+      }
+      body > div {
+        flex: 1;
+        height: 100%;
+        background-size: contain;
+      }
+      .left {
+        background-image: url(./assets/001.jpg);
+        background-position: left bottom;
+      }
+      .right {
+        background-image: url(./assets/002.jpg);
+        background-position: right bottom;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="left"></div>
+    <div class="right"></div>
+  </body>
+</html>

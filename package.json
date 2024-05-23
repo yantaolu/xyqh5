@@ -1,10 +1,10 @@
 {
   "name": "xyqh5",
   "version": "1.0.0",
-  "description": "梦幻西游个人网页版",
+  "description": "梦幻西游网页版",
   "main": "src/index.js",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "cross-env NODE_ENV=development electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -20,7 +20,9 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron/fuses": "^1.8.0",
-    "electron": "^30.0.7"
+    "cross-env": "^7.0.3",
+    "electron": "^30.0.7",
+    "prettier": "^2.8.8"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
