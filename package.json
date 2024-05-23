@@ -1,17 +1,28 @@
 {
   "name": "xyqh5",
   "version": "1.0.0",
-  "description": "梦幻西游H5-electron桌面版",
+  "description": "梦幻西游个人网页版",
   "main": "src/index.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-packager ./ --platform=win32 --arch=x64 --overwrite"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^9.0.2",
-    "electron-packager": "^14.2.1"
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-deb": "^7.4.0",
+    "@electron-forge/maker-rpm": "^7.4.0",
+    "@electron-forge/maker-squirrel": "^7.4.0",
+    "@electron-forge/maker-zip": "^7.4.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "@electron-forge/plugin-fuses": "^7.4.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^30.0.7"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
   }
 }
