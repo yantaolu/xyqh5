@@ -21,7 +21,7 @@
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron/fuses": "^1.8.0",
     "cross-env": "^7.0.3",
-    "electron": "^30.0.7",
+    "electron": "^35.7.5",
     "prettier": "^2.8.8"
   },
   "dependencies": {
